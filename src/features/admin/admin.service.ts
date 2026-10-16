@@ -25,6 +25,13 @@ function requireBackend() {
   return supabase;
 }
 
+export async function listAdminCategories() {
+  const db = requireBackend();
+  const { data, error } = await db.from('categories').select('id,name,slug').order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function listAdminProducts() {
   const db = requireBackend();
   const { data, error } = await db.from('products').select('*, categories(name), product_images(*)').order('created_at', { ascending: false });
