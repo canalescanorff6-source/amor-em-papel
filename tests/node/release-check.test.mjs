@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import { releaseReadiness } from '../../scripts/release-check-lib.mjs';
+test('release check lists exact blockers for preview config',()=>{const r=releaseReadiness({});assert.equal(r.ready,false);assert.ok(r.blockers.length>=5);});
+test('release check passes complete production-safe public config',()=>{const r=releaseReadiness({VITE_SITE_URL:'https://amorempapel.com.br',VITE_WHATSAPP_NUMBER:'5598912345678',VITE_SUPABASE_URL:'https://abc.supabase.co',VITE_SUPABASE_ANON_KEY:'public-key',REAL_CATALOG_READY:'true',VITE_INSTAGRAM_URL:'https://instagram.com/amorempapel',VITE_SERVICE_REGION:'São Luís - MA'});assert.equal(r.ready,true);});

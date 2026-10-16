@@ -1,0 +1,2 @@
+import { test, expect } from '@playwright/test';
+test('catalog can search to empty state and open a product', async ({ page }) => { await page.goto('/produtos'); const search = page.getByLabel('Pesquisar catálogo'); await search.fill('algo que não existe 123'); await expect(page.getByText('Nenhum item encontrado')).toBeVisible(); await search.fill('Jardim'); await page.getByRole('link', { name: /Ver detalhes de Topo de bolo tema Jardim/i }).click(); await expect(page.getByRole('heading', { name: 'Topo de bolo tema Jardim' })).toBeVisible(); });

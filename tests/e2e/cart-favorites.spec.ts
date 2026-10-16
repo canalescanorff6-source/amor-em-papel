@@ -1,0 +1,2 @@
+import { test, expect } from '@playwright/test';
+test('cart and favorite survive reload', async ({ page }) => { await page.goto('/produtos'); const first=page.locator('.product-card').first(); await first.getByRole('button',{name:'Adicionar ao carrinho'}).click(); await first.locator('.product-card__heart').click(); await page.reload(); await expect(page.getByLabel('Abrir carrinho')).toContainText('1'); await page.getByRole('link',{name:'Favoritos'}).first().click(); await expect(page.locator('.product-card')).toHaveCount(1); });

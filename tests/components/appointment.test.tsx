@@ -1,0 +1,2 @@
+import { render,screen } from '@testing-library/react';import userEvent from '@testing-library/user-event';import { AppointmentForm } from '../../src/features/scheduling/AppointmentForm';
+test('form states that selected time remains pending',async()=>{const user=userEvent.setup();render(<AppointmentForm availability={[]} onReview={()=>{}}/>);expect(screen.getByText(/não confirma/i)).toBeInTheDocument();await user.type(screen.getByLabelText('Data desejada'),'2026-12-20');expect(screen.getByText(/sujeito à confirmação/i)).toBeInTheDocument();});
