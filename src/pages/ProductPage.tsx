@@ -1,5 +1,13 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { demoProducts } from '../data/demoCatalog';
 import { getProductBySlug } from '../features/catalog/catalog.service';
+import { useCatalogData } from '../features/catalog/CatalogDataProvider';
 import { ProductDetail } from '../features/catalog/ProductDetail';
-export function ProductPage() { const { slug = '' } = useParams(); const product = getProductBySlug(demoProducts, slug); return product ? <ProductDetail product={product} /> : <Navigate to="/404" replace />; }
+import { Skeleton } from '../components/ui/Skeleton';
+
+export function ProductPage() {
+  const { slug = '' } = useParams();
+  const { products, loading } = useCatalogData();
+  if (loading) return <Skeleton height={560} />;
+  const product = getProductBySlug(products, slug);
+  return product ? <ProductDetail product={product} /> : <Navigate to="/404" replace />;
+}
