@@ -15,7 +15,7 @@ test('home, catalog and persisted cart work', async ({ page }) => {
   await page.getByRole('link', { name: /Explorar produtos/i }).click();
   await expect(page).toHaveURL(/produtos/);
 
-  await page.getByRole('button', { name: /Adicionar/i }).first().click();
+  await page.getByRole('button', { name: /^Adicionar$/i }).first().click();
   await waitForPersistedCart(page);
 
   await page.reload();
@@ -60,7 +60,7 @@ test('mobile has no horizontal overflow', async ({ page }) => {
 
 test('checkout requires review before WhatsApp', async ({ page }) => {
   await page.goto('/produtos');
-  await page.getByRole('button', { name: /Adicionar/i }).first().click();
+  await page.getByRole('button', { name: /^Adicionar$/i }).first().click();
   await waitForPersistedCart(page);
 
   await page.goto('/checkout');
