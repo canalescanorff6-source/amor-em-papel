@@ -28,7 +28,7 @@ jobs:
         run: |
           rm -rf .bootstrap
           unzip -oq /tmp/amor-v2.zip -d .
-          rm -f .github/workflows/bootstrap-v2.yml
+          rm -f .github/workflows/bootstrap-v2.yml .github/workflows/ci.yml
 
       - name: Commit V2 source
         run: |
