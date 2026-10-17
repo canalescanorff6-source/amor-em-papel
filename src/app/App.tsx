@@ -1,0 +1,1 @@
+import { AppRoutes } from './routes';import { Seo } from '../lib/seo/Seo';export function App(){return <><Seo title="Papelaria personalizada" description="Papelaria criativa, topos de bolo, lembrancinhas e produtos personalizados da Amor em Papel."/><AppRoutes/></>}

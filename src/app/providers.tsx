@@ -1,0 +1,2 @@
+import { AuthProvider } from '../features/auth/AuthProvider';import { CartProvider } from '../features/cart/cart.store';import { FavoritesProvider } from '../features/favorites/favorites.store';import { CatalogProvider } from '../features/catalog/catalog.store';
+export function AppProviders({children}:{children:React.ReactNode}){return <AuthProvider><CatalogProvider><FavoritesProvider><CartProvider>{children}</CartProvider></FavoritesProvider></CatalogProvider></AuthProvider>}

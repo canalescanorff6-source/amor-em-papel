@@ -1,5 +1,60 @@
-# Amor em Papel
+# Amor em Papel — V2 Premium
 
-Repositório oficial do site Amor em Papel — Papelaria Personalizada.
+E-commerce/catálogo premium da **Amor em Papel — Papelaria Personalizada**, inspirado na organização da referência Paperly, porém com identidade própria da marca.
 
-> A V2 premium está sendo desenvolvida na branch `feat/paperly-v2` e só será integrada após o CI ficar verde.
+## O que já está implementado
+
+- React + TypeScript + Vite.
+- Tailwind CSS no pipeline e CSS autoral responsivo.
+- Framer Motion e Lucide Icons.
+- Layout desktop em três regiões: sidebar, conteúdo, rail do carrinho.
+- Tablet/mobile reorganizados com menu, busca e navegação inferior.
+- Catálogo, categorias, busca, filtros, ordenação, detalhes e personalizados.
+- Carrinho persistente e favoritos persistentes.
+- Checkout com tela de conferência antes do WhatsApp.
+- WhatsApp brasileiro normalizado e mensagem codificada uma única vez com `encodeURIComponent`.
+- Solicitação de atendimento/agendamento sempre pendente até confirmação humana.
+- Supabase Auth, Postgres, Storage e RLS preparados.
+- Conta, histórico de pedidos e rotas administrativas protegidas.
+- Admin para visão geral, produtos, pedidos e agenda.
+- SEO básico, 404, headers Cloudflare, CI e testes.
+
+## Dados demonstrativos
+
+Nenhum preço, desconto, avaliação, estoque, telefone ou portfólio real foi inventado. O catálogo inicial está marcado como **Demonstração** e usa placeholders. `npm run check:release` bloqueia lançamento definitivo enquanto isso não for substituído.
+
+## Executar localmente
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+## Verificação
+
+```bash
+npm run typecheck
+npm run test:unit
+npm run build
+npm run test:e2e
+```
+
+## Backend
+
+Leia [`docs/SUPABASE-SETUP.md`](docs/SUPABASE-SETUP.md).
+
+## Cloudflare
+
+Leia [`docs/CLOUDFLARE-DEPLOY.md`](docs/CLOUDFLARE-DEPLOY.md).
+
+## Ordem de lançamento
+
+1. GitHub/CI verde.
+2. Supabase criado + migrations + RLS.
+3. Cloudflare Pages conectado.
+4. WhatsApp, Instagram, região e domínio reais.
+5. Produtos/fotos/preços/estoques reais.
+6. Conta admin validada.
+7. `npm run check:release` sem bloqueadores.
+8. Domínio definitivo e publicação.

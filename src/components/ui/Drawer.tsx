@@ -1,0 +1,2 @@
+import { X } from 'lucide-react';
+export function Drawer({open,title,onClose,children}:{open:boolean;title:string;onClose:()=>void;children:React.ReactNode}){if(!open)return null;return <><button aria-label="Fechar painel" className="drawer-backdrop" onClick={onClose}/><aside className="drawer" role="dialog" aria-modal="true" aria-label={title}><div className="drawer-head"><h2>{title}</h2><button className="icon-btn" onClick={onClose} aria-label="Fechar"><X size={20}/></button></div><div className="drawer-body">{children}</div></aside></>}

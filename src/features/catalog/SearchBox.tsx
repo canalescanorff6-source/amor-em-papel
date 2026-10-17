@@ -1,0 +1,2 @@
+import { Search } from 'lucide-react';
+export function SearchBox({value,onChange,suggestions=[],placeholder='Buscar produtos, temas e categorias...'}:{value:string;onChange:(value:string)=>void;suggestions?:string[];placeholder?:string}){const id='catalog-suggestions';return <label className="search-box"><Search size={20}/><span className="sr-only">Buscar</span><input list={id} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/><datalist id={id}>{suggestions.slice(0,8).map((s)=><option key={s} value={s}/>)}</datalist></label>}

@@ -1,0 +1,2 @@
+import type { Product } from './types';import { ProductCard } from './ProductCard';import { EmptyState } from '../../components/ui/EmptyState';
+export function ProductGrid({products}:{products:Product[]}){if(!products.length)return <EmptyState title="Nenhum produto encontrado" description="Tente remover filtros ou buscar por outro termo."/>;return <div className="product-grid">{products.map(p=><ProductCard key={p.id} product={p}/>)}</div>}
