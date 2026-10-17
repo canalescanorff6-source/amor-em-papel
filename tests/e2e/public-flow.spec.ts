@@ -20,7 +20,7 @@ test('home, catalog and persisted cart work', async ({ page }) => {
 
   await page.reload();
   await page.goto('/carrinho');
-  await expect(page.getByText(/Topo infantil em camadas/i)).toBeVisible();
+  await expect(page.getByRole('main').getByText(/Topo infantil em camadas/i)).toBeVisible();
 });
 
 test('mobile has no horizontal overflow', async ({ page }) => {
