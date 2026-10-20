@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { demoProducts } from '../../src/data/demoCatalog';
 import { loadCart, saveCart, getCartStorageKey } from '../../src/features/cart/cart.storage';
 import { loadFavorites, saveFavorites, getFavoritesStorageKey } from '../../src/features/favorites/favorites.storage';
+import { verifiedRole } from '../../src/features/auth/AuthProvider';
 
 const item = { id: 'product-a', product: demoProducts[0], quantity: 2 };
 
@@ -30,6 +31,13 @@ describe('isolamento local entre clientes', () => {
     expect(loadFavorites('customer-2')).toEqual([]);
     expect(loadFavorites()).toEqual(['guest-fav']);
     expect(getFavoritesStorageKey('customer-1')).not.toBe(getFavoritesStorageKey('customer-2'));
+  });
+
+  it('não reutiliza permissão admin da conta anterior', () => {
+    const adminProof = { userId: 'customer-1', role: 'admin' as const };
+    expect(verifiedRole('customer-1', adminProof)).toBe('admin');
+    expect(verifiedRole('customer-2', adminProof)).toBeNull();
+    expect(verifiedRole(null, adminProof)).toBeNull();
   });
 
   it('ignora favoritos corrompidos sem quebrar a página', () => {
