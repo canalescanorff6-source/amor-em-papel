@@ -21,7 +21,7 @@ E-commerce/catálogo premium da **Amor em Papel — Papelaria Personalizada**, i
 
 ## Dados demonstrativos
 
-Nenhum preço, desconto, avaliação, estoque, telefone ou portfólio real foi inventado. O catálogo inicial está marcado como **Demonstração** e usa placeholders. `npm run check:release` bloqueia lançamento definitivo enquanto isso não for substituído.
+Nenhum preço, desconto, avaliação, estoque, telefone ou portfólio real foi inventado. O catálogo inicial está marcado como **Demonstração** e usa placeholders. `npm run check:release` bloqueia configurações incompletas e o modo de demonstração ativo; **não verifica o catálogo nem o backend em produção**. Fotos, produtos e preços reais precisam de conferência no Supabase antes de liberar o site.
 
 ## Executar localmente
 
