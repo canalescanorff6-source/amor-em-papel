@@ -45,3 +45,19 @@ describe('release readiness', () => {
     expect(result.blockers).toHaveLength(0);
   });
 });
+
+describe('validation of production settings', () => {
+  it('blocks a malformed WhatsApp number instead of trusting a nonempty string', () => {
+    const result = getReleaseReadiness({ ...base, whatsappNumber: 'telefone-pendente' }, []);
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.stringMatching(/WhatsApp/i),
+    ]));
+  });
+
+  it('blocks malformed HTTPS origins', () => {
+    const result = getReleaseReadiness({ ...base, baseUrl: 'https://' }, []);
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.stringMatching(/domínio HTTPS/i),
+    ]));
+  });
+});
