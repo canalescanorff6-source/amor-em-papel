@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const requestedUser = activeUserId;
     let cancelled = false;
-    void supabase.from('profiles').select('role').eq('id', requestedUser).single()
+    void Promise.resolve(supabase.from('profiles').select('role').eq('id', requestedUser).single())
       .then(({ data }) => {
         if (!cancelled) {
           setRoleProof({ userId: requestedUser, role: data?.role === 'admin' ? 'admin' : 'customer' });
