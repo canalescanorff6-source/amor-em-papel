@@ -1,3 +1,4 @@
+import { futureDateISO } from '../helpers/date';
 import { test, expect } from '@playwright/test';
 
 test('checkout cria link WhatsApp válido durante o gesto do usuário', async ({ page }) => {
@@ -8,7 +9,7 @@ test('checkout cria link WhatsApp válido durante o gesto do usuário', async ({
   await page.getByLabel('Nome completo').fill('Maria da Silva');
   await page.getByLabel('Telefone com DDD').fill('98999998888');
   await page.getByLabel('Tipo de personalização').fill('Coração rosa 💗 e laço');
-  await page.getByLabel('Data desejada').fill('2026-12-20');
+  await page.getByLabel('Data desejada').fill(futureDateISO());
   await page.getByRole('button', { name: 'Revisar pedido' }).click();
 
   const link = page.getByRole('link', { name: /Enviar pedido organizado no WhatsApp/i });

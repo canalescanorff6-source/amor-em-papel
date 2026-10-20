@@ -1,3 +1,4 @@
+import { futureDateISO } from '../helpers/date';
 import { expect, test } from '@playwright/test';
 
 const cartKey = 'amor-em-papel:cart:v1';
@@ -66,7 +67,7 @@ test('checkout requires review before WhatsApp', async ({ page }) => {
   await page.goto('/checkout');
   await page.getByLabel('Nome completo').fill('Maria da Silva');
   await page.getByLabel('Telefone com DDD').fill('98999998888');
-  await page.getByLabel('Data desejada').fill('2026-12-20');
+  await page.getByLabel('Data desejada').fill(futureDateISO());
   await page.getByRole('button', { name: /Revisar pedido/i }).click();
 
   await expect(page.getByRole('heading', { name: /Confira antes de enviar/i })).toBeVisible();
