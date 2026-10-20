@@ -7,9 +7,10 @@ Crie um projeto no Supabase e guarde a senha do banco fora do GitHub.
 No SQL Editor, execute na ordem:
 1. `supabase/migrations/0001_initial_schema.sql`
 2. `supabase/migrations/0002_rls_policies.sql`
-3. `supabase/seed.sql`
+3. `supabase/migrations/0003_order_request_fields.sql`
+4. `supabase/seed.sql`
 
-As migrations criam perfis, categorias, produtos, imagens, favoritos, carrinho, pedidos, itens, disponibilidade e agendamentos. Todas as tabelas sensíveis usam RLS.
+As migrations criam perfis, categorias, produtos, imagens, favoritos, carrinho, pedidos, itens, disponibilidade e agendamentos. Todas as tabelas sensíveis usam RLS. A migration 0003 preserva separadamente a quantidade solicitada e as instruções de personalização no histórico; os campos são opcionais para manter compatibilidade com pedidos antigos.
 
 ## 3. Variáveis públicas
 No Cloudflare Pages, configure:
