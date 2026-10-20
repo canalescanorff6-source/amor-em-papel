@@ -1,0 +1,1 @@
+import { describe,expect,it } from 'vitest';import { createPendingAppointment } from '../../src/features/scheduling/scheduling.schema';it('never auto-confirms an appointment request',()=>{expect(createPendingAppointment({name:'Maria',phone:'98999998888',service:'Orçamento',date:'2026-11-01',time:'10:30',notes:''}).status).toBe('pending')});

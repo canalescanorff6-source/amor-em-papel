@@ -1,0 +1,15 @@
+.next/
+out/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+.env*
+!.env.example
+.worktrees/
+.superpowers/
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+dist/

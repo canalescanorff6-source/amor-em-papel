@@ -1,0 +1,1 @@
+import { Navigate } from 'react-router-dom';import { useAuth } from './AuthProvider';export function RequireAdmin({children}:{children:React.ReactNode}){const a=useAuth();if(a.loading)return <div className="page-wrap">Verificando acesso...</div>;if(!a.user||a.role!=='admin')return <Navigate to="/conta" replace/>;return <>{children}</>}

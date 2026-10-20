@@ -1,0 +1,1 @@
+import { Navigate,useLocation } from 'react-router-dom';import { useAuth } from './AuthProvider';export function RequireAuth({children}:{children:React.ReactNode}){const a=useAuth();const l=useLocation();if(a.loading)return <div className="page-wrap">Carregando conta...</div>;if(!a.user)return <Navigate to="/conta" state={{from:l.pathname}} replace/>;return <>{children}</>}

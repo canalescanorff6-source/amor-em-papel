@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img" aria-label="INSPIRAÇÃO - modelo demonstrativo">
+    <rect width="900" height="650" rx="48" fill="#FCE5EF"/>
+    <circle cx="710" cy="125" r="105" fill="#EAF8FE" opacity=".75"/><circle cx="145" cy="520" r="145" fill="#F5619C" opacity=".32"/>
+    <path d="M330 210h240l55 230H275z" fill="#fff" stroke="#472B24" stroke-width="12" stroke-linejoin="round"/>
+    <path d="M365 310h170" stroke="#F5619C" stroke-width="22" stroke-linecap="round"/>
+    <path d="M395 370h110" stroke="#EAF8FE" stroke-width="18" stroke-linecap="round"/>
+    <path d="M410 195c-55-55-110 28 0 95 110-67 55-150 0-95z" fill="#F5619C" stroke="#472B24" stroke-width="8"/>
+    <text x="450" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#472B24">INSPIRAÇÃO</text>
+    <text x="450" y="578" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#6F6670">MODELO DEMONSTRATIVO</text></svg>

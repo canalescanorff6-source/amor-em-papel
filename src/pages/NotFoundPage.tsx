@@ -1,0 +1,1 @@
+import { Link } from 'react-router-dom';export function NotFoundPage(){return <section className="not-found"><span>404</span><h1>Essa página saiu para recortar um coração. 💗</h1><p>Mas a gente te leva de volta para as coisas bonitas.</p><Link className="btn btn-primary" to="/">Voltar ao início</Link></section>}
