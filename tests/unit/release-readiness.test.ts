@@ -36,7 +36,7 @@ describe('release readiness', () => {
     const result = getReleaseReadiness({
       ...base,
       baseUrl: 'https://amorempapel.com.br',
-      whatsappNumber: '5598999999999',
+      whatsappNumber: '5598998765432',
       supabaseUrl: 'https://project.supabase.co',
       supabaseAnonKey: 'anon-public-key',
       demoFallback: false,
