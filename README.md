@@ -10,7 +10,8 @@ E-commerce/catálogo premium da **Amor em Papel — Papelaria Personalizada**, i
 - Layout desktop em três regiões: sidebar, conteúdo, rail do carrinho.
 - Tablet/mobile reorganizados com menu, busca e navegação inferior.
 - Catálogo, categorias, busca, filtros, ordenação, detalhes e personalizados.
-- Carrinho persistente e favoritos persistentes.
+- Carrinho e favoritos persistentes, com armazenamento isolado por conta autenticada (a cesta do visitante continua independente).
+- Permissões administrativas revalidadas por identidade após entrar ou trocar de conta.
 - Checkout com tela de conferência antes do WhatsApp.
 - WhatsApp brasileiro normalizado e mensagem codificada uma única vez com `encodeURIComponent`.
 - Solicitação de atendimento/agendamento sempre pendente até confirmação humana.
