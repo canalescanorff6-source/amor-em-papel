@@ -5,7 +5,7 @@
  */
 export function normalizeBrazilPhone(input: string): string {
   const trimmed = input.trim();
-  if (!/^[+\d\s().-]+$/.test(trimmed) || (trimmed.includes('+') && !/^\+55\b/.test(trimmed))) return '';
+  if (!/^\+?[\d\s().-]+$/.test(trimmed) || (trimmed.startsWith('+') && !trimmed.startsWith('+55'))) return '';
   const digits = trimmed.replace(/\D/g, '');
   let national: string;
   if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
