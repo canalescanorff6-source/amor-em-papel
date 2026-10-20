@@ -1,3 +1,4 @@
+import { normalizeBrazilPhone } from '../whatsapp/normalizePhone';
 import type { Product } from '../../features/catalog/types';
 import type { SiteConfig } from './siteConfig';
 
@@ -5,8 +6,15 @@ export type ReleaseReadiness = { ready: boolean; blockers: string[] };
 
 export function getReleaseReadiness(config: SiteConfig, products: Product[]): ReleaseReadiness {
   const blockers: string[] = [];
-  if (!/^https:\/\//i.test(config.baseUrl)) blockers.push('Definir domínio HTTPS real em VITE_SITE_BASE_URL.');
-  if (!config.whatsappNumber) blockers.push('Definir WhatsApp real em VITE_WHATSAPP_NUMBER.');
+  let validDomain = false;
+  try {
+    const url = new URL(config.baseUrl);
+    validDomain = url.protocol === 'https:' && url.hostname.includes('.') && !url.username && !url.password;
+  } catch {
+    validDomain = false;
+  }
+  if (!validDomain) blockers.push('Definir domínio HTTPS real em VITE_SITE_BASE_URL.');
+  if (!normalizeBrazilPhone(config.whatsappNumber)) blockers.push('Definir WhatsApp real e válido em VITE_WHATSAPP_NUMBER.');
   if (!config.supabaseUrl || !config.supabaseAnonKey) blockers.push('Conectar o projeto Supabase real antes do lançamento.');
   if (config.demoFallback) blockers.push('Desativar o fallback demonstrativo com VITE_ENABLE_DEMO_FALLBACK=false.');
   if (!products.length) blockers.push('Cadastrar ao menos um produto real e publicado.');
