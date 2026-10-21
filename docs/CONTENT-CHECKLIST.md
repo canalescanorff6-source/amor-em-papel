@@ -49,15 +49,24 @@ Use este checklist antes de transformar a versão demonstrativa em site público
 ## Verificação técnica final
 
 ```bash
-npm ci
-npm run check
+npm install
+npm run check:source
+npm run typecheck
+npm run test:unit
+npm run build
+npm run test:e2e
 npm run check:release
 ```
 
 - [ ] Todos os testes estão verdes.
 - [ ] Não há overflow horizontal em 360, 390, 430, 768, 1024, 1280 e 1536 px.
 - [ ] Não há links quebrados.
-- [ ] Os dados finais estão em `src/config.mjs` ou nas variáveis `SITE_*` do Cloudflare.
-- [ ] `SITE_BASE_URL`/`baseUrl` está configurado com o domínio final.
-- [ ] `out/sitemap.xml` contém o domínio final após novo build.
+- [ ] Dados reais configurados nas variáveis `VITE_*` do Cloudflare Pages (`.env.example` é somente modelo).
+- [ ] `VITE_SITE_BASE_URL` configurada com a URL HTTPS final.
+- [ ] `VITE_WHATSAPP_NUMBER` configurada com telefone oficial brasileiro.
+- [ ] `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` do projeto correto (nunca uma chave `service_role`).
+- [ ] `VITE_ENABLE_DEMO_FALLBACK=false` somente após cadastrar e revisar catálogo real.
+- [ ] Build Vite gerado em `dist/`, usando `npm run build`.
+- [ ] Migrações Supabase `0001` a `0004` aplicadas e RLS testada com duas contas reais.
+- [ ] Painel de fotos V2.2 testado com produto real, seleção de capa e exclusão.
 - [ ] Nenhum placeholder é apresentado como trabalho real.
