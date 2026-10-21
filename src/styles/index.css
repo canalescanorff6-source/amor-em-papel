@@ -14,3 +14,35 @@
 
 /* V2 merchandising polish */
 .showcase-section{content-visibility:auto;contain-intrinsic-size:620px}.merch-empty{min-height:96px;display:flex;align-items:center;justify-content:center;text-align:center;padding:22px;border:1px dashed #e4d4dc;border-radius:18px;background:linear-gradient(135deg,#fff,#fff7fb);color:var(--muted);font-size:13px}.inspiration-home{overflow:hidden}.inspiration-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.inspiration-strip a{position:relative;min-height:220px;border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 12px 28px rgba(71,43,36,.06)}.inspiration-strip img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.inspiration-strip span{position:absolute;left:12px;right:12px;bottom:12px;padding:10px 12px;border-radius:13px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);font-weight:900;font-size:12px}.inspiration-strip a:hover img{transform:scale(1.035)}.demo-caption{display:block;margin-top:10px;color:var(--muted)}.btn.success{background:#2c9a68;border-color:#2c9a68}.drawer{animation:drawer-in .22s ease-out}.drawer-backdrop{animation:fade-in .18s ease-out}@keyframes drawer-in{from{transform:translateX(24px);opacity:.75}to{transform:translateX(0);opacity:1}}@keyframes fade-in{from{opacity:0}to{opacity:1}}.admin-stats-wide{grid-template-columns:repeat(4,1fr)}.admin-stats small{margin-top:5px;color:var(--muted)}.health-card{margin:16px 0;display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:18px;border:1px solid}.health-card>div{display:grid;gap:3px}.health-card span,.admin-health-grid span{font-size:12px;color:var(--muted);line-height:1.45}.health-card.healthy{background:#effbf5;border-color:#b8e7cf;color:#177649}.health-card.attention{background:#fff8e8;border-color:#f1d99d;color:#795b09}.admin-health-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.admin-health-grid article{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}.admin-health-grid article>div{display:grid;gap:3px}@media(max-width:980px){.admin-stats-wide{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.inspiration-strip{display:flex;overflow:auto;scroll-snap-type:x mandatory;padding-bottom:4px}.inspiration-strip a{min-width:78%;scroll-snap-align:start}.admin-health-grid{grid-template-columns:1fr}.showcase-section{content-visibility:visible}}@media(max-width:390px){.admin-stats-wide{grid-template-columns:1fr}}
+
+
+/* Amor em Papel V2.2 — galeria administrativa, responsiva e acessível */
+.admin-photo-hint{margin:0;color:var(--muted);font-size:.85rem;line-height:1.6}
+.product-admin-summary{display:grid;gap:4px;min-width:0}
+.products-admin-list article>.product-photo-gallery-wrap,
+.products-admin-list article>.product-photo-preview{grid-column:1/-1;min-width:0;width:100%}
+.product-photo-gallery-wrap{border-top:1px solid var(--line);padding-top:12px}
+.product-photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:12px}
+.product-photo-tile{background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden;min-width:0}
+.product-photo-tile>img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--pinkSoft)}
+.product-photo-actions{padding:7px;display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
+.product-photo-caption{color:var(--muted);font-size:.7rem;font-weight:700;min-width:70px}
+.photo-action{border:1px solid var(--line);border-radius:10px;background:#fff;padding:7px;display:inline-flex;gap:4px;align-items:center;font-size:.72rem;font-weight:700;min-height:36px}
+.photo-action:hover{border-color:var(--pink);background:var(--pinkSoft)}
+.photo-action:disabled{opacity:.5;cursor:not-allowed}
+.photo-action.danger{color:#b3264f}
+.product-photo-empty{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem;padding:8px 0}
+.product-photo-preview{background:#fff6fa;border:1px solid #f5c4d7;border-radius:18px;padding:12px;display:flex!important;align-items:center;gap:14px}
+.product-photo-preview>img{flex:0 0 auto;width:112px;height:112px;object-fit:cover;border-radius:12px;background:#fff}
+.product-photo-preview>div{display:grid;gap:7px;min-width:0}
+.product-photo-preview small{color:var(--muted);font-size:.78rem}
+.photo-preview-actions{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:720px){
+ .products-admin-list article>.product-photo-preview{flex-direction:column;align-items:stretch}
+ .product-photo-preview>img{width:100%;height:auto;max-height:250px;aspect-ratio:16/10;object-fit:contain}
+ .product-photo-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .photo-preview-actions>.btn{flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+ .product-photo-tile,.photo-action{transition:none}
+}

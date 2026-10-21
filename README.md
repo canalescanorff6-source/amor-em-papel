@@ -18,6 +18,7 @@ E-commerce/catálogo premium da **Amor em Papel — Papelaria Personalizada**, i
 - Supabase Auth, Postgres, Storage e RLS preparados.
 - Conta, histórico de pedidos e rotas administrativas protegidas.
 - Admin para visão geral, produtos, pedidos e agenda.
+- Estúdio de fotos administrativo: otimização local, prévia, escolha de capa, exclusão e tratamento de falhas de Storage/metadata ([guia V2.2](docs/ESTUDIO-FOTOS-V2.2.md)).
 - SEO básico, 404, headers Cloudflare, CI e testes.
 
 ## Dados demonstrativos
