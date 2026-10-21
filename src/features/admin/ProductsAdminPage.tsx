@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Pencil, Trash2, Upload } from 'lucide-react';
 import { supabase } from '../../lib/supabase/client';
+import { prepareProductImage, formatFileBytes } from './imageOptimization';
+import { ProductMediaGallery, productPhotos, type ProductPhoto } from './ProductMediaGallery';
 
 type Row = {
   id: string;
@@ -20,6 +22,14 @@ type Row = {
   tags: string[];
 };
 type CategoryRow = { id: string; name: string };
+type PendingPhoto = {
+  productId: string;
+  file: File;
+  url: string;
+  sourceBytes: number;
+  width: number;
+  height: number;
+};
 
 const emptyDraft: Omit<Row, 'id'> = {
   category_id: null,
@@ -48,17 +58,36 @@ export function ProductsAdminPage() {
   const [draft, setDraft] = useState<Omit<Row, 'id'>>(emptyDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
+  const [photos, setPhotos] = useState<ProductPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busyPhotoId, setBusyPhotoId] = useState<string | null>(null);
+  const [preparingId, setPreparingId] = useState<string | null>(null);
+  const [pending, setPending] = useState<PendingPhoto | null>(null);
+
+  // A URL temporária existe somente enquanto a prévia está visível.
+  useEffect(() => () => {
+    if (pending) URL.revokeObjectURL(pending.url);
+  }, [pending]);
 
   const refresh = async () => {
-    if (!supabase) return;
-    const [{ data: products }, { data: cats }] = await Promise.all([
+    if (!supabase) { setLoading(false); return; }
+    const [{ data: products, error: productsError },
+      { data: cats, error: categoriesError },
+      { data: images, error: imagesError }] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('categories').select('id,name').eq('is_active', true).order('sort_order'),
+      supabase.from('product_images').select('id,product_id,storage_path,alt_text,sort_order').order('sort_order'),
     ]);
+    setLoading(false);
+    if (productsError || categoriesError || imagesError) {
+      setNotice('Não foi possível atualizar produtos e fotos. Verifique a conexão e tente novamente.');
+      return;
+    }
     setRows((products ?? []) as Row[]);
     setCategories((cats ?? []) as CategoryRow[]);
+    setPhotos((images ?? []) as ProductPhoto[]);
   };
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { void refresh(); }, []);
 
   const set = <K extends keyof Omit<Row, 'id'>>(key: K, value: Omit<Row, 'id'>[K]) => {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -87,23 +116,113 @@ export function ProductsAdminPage() {
     reset();
     await refresh();
   };
-  const upload = async (productId: string, file: File) => {
-    if (!supabase) return;
-    if (!file.type.startsWith('image/')) { setNotice('Selecione uma imagem válida.'); return; }
-    if (file.size > 8 * 1024 * 1024) { setNotice('A imagem deve ter no máximo 8 MB.'); return; }
-    setNotice('Enviando imagem...');
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const path = `${productId}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from('product-media').upload(path, file, { upsert: false, contentType: file.type });
-    if (error) { setNotice(error.message); return; }
-    const { error: metaError } = await supabase.from('product_images').insert({ product_id: productId, storage_path: path, alt_text: 'Foto do produto' });
-    setNotice(metaError?.message ?? 'Imagem enviada com sucesso.');
+  const selectPhoto = async (productId: string, file: File) => {
+    if (preparingId || busyPhotoId) return;
+    setNotice('');
+    setPending(null);
+    setPreparingId(productId);
+    try {
+      const optimized = await prepareProductImage(file);
+      const url = URL.createObjectURL(optimized.file);
+      setPending({
+        productId, file: optimized.file, url, sourceBytes: optimized.sourceBytes,
+        width: optimized.width, height: optimized.height,
+      });
+      setNotice('Imagem preparada. Confira a prévia e confirme o envio.');
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Não foi possível preparar esta imagem.');
+    } finally {
+      setPreparingId(null);
+    }
   };
+
+  const confirmPhoto = async () => {
+    if (!supabase || !pending || busyPhotoId) return;
+    const selected = pending;
+    setBusyPhotoId(selected.productId);
+    setNotice('Enviando imagem otimizada...');
+    const ext = selected.file.type === 'image/webp' ? 'webp'
+      : selected.file.type === 'image/png' ? 'png' : 'jpg';
+    const path = selected.productId + '/' + crypto.randomUUID() + '.' + ext;
+    try {
+      const { error: storageError } = await supabase.storage.from('product-media')
+        .upload(path, selected.file, { upsert: false, contentType: selected.file.type, cacheControl: '31536000' });
+      if (storageError) throw new Error('Falha ao enviar a imagem. Nenhuma foto foi cadastrada.');
+      const product = rows.find(row => row.id === selected.productId);
+      const order = productPhotos(photos, selected.productId);
+      const sort = order.length ? Math.max(...order.map(p => p.sort_order)) + 10 : 0;
+      const { error: metaError } = await supabase.from('product_images').insert({
+        product_id: selected.productId,
+        storage_path: path,
+        alt_text: product?.name ?? 'Foto de produto personalizado',
+        sort_order: sort,
+      });
+      if (metaError) {
+        const cleanup = await supabase.storage.from('product-media').remove([path]);
+        throw new Error(cleanup.error
+          ? 'Falha no cadastro da foto e na limpeza do arquivo. Verifique o Storage.'
+          : 'Falha no cadastro da foto; o arquivo enviado foi removido.');
+      }
+      setPending(null);
+      setNotice('Foto cadastrada! Arquivo enviado: ' + formatFileBytes(selected.file.size) +
+        ' (original: ' + formatFileBytes(selected.sourceBytes) + ').');
+      await refresh();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Não foi possível cadastrar a imagem.');
+    } finally {
+      setBusyPhotoId(null);
+    }
+  };
+
+  const makeCover = async (photo: ProductPhoto) => {
+    if (!supabase || busyPhotoId) return;
+    setBusyPhotoId(photo.product_id);
+    try {
+      const list = productPhotos(photos, photo.product_id);
+      const firstOrder = Math.min(...list.map(p => p.sort_order));
+      const { error } = await supabase.from('product_images')
+        .update({ sort_order: firstOrder - 1 }).eq('id', photo.id);
+      if (error) throw new Error('Não foi possível definir a foto de capa.');
+      setNotice('Foto principal atualizada.');
+      await refresh();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Falha ao alterar a capa.');
+    } finally {
+      setBusyPhotoId(null);
+    }
+  };
+
+  const removePhoto = async (photo: ProductPhoto) => {
+    if (!supabase || busyPhotoId) return;
+    if (!window.confirm('Remover esta foto do catálogo?')) return;
+    setBusyPhotoId(photo.product_id);
+    try {
+      // Remover metadados primeiro evita cartões que apontem para uma foto inexistente.
+      const { error } = await supabase.from('product_images').delete().eq('id', photo.id);
+      if (error) throw new Error('Não foi possível excluir a foto do catálogo.');
+      const { error: storageError } = await supabase.storage.from('product-media').remove([photo.storage_path]);
+      setNotice(storageError
+        ? 'A foto foi removida do catálogo, mas o arquivo precisa de limpeza no Storage.'
+        : 'Foto removida do catálogo e do armazenamento.');
+      await refresh();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Não foi possível excluir a foto.');
+    } finally {
+      setBusyPhotoId(null);
+    }
+  };
+
   const remove = async (row: Row) => {
     if (!supabase) return;
     if (!window.confirm(`Excluir definitivamente “${row.name}”? Esta ação não pode ser desfeita.`)) return;
+    const paths = productPhotos(photos, row.id).map(photo => photo.storage_path);
     const { error } = await supabase.from('products').delete().eq('id', row.id);
-    setNotice(error?.message ?? 'Produto excluído.');
+    if (error) { setNotice('Não foi possível excluir este produto: ' + error.message); return; }
+    // O banco exclui os metadados por cascade. Os objetos exigem limpeza separada.
+    const cleanup = paths.length ? await supabase.storage.from('product-media').remove(paths) : null;
+    setNotice(cleanup?.error
+      ? 'Produto excluído, mas algumas fotos precisam de limpeza no Storage.'
+      : 'Produto e fotos excluídos.');
     await refresh();
   };
 
@@ -123,12 +242,46 @@ export function ProductsAdminPage() {
       </div>
       <button className="btn btn-primary full">{editingId ? 'Salvar alterações' : 'Cadastrar produto'}</button>
     </form>
-    {notice && <div className="notice">{notice}</div>}
-    <div className="admin-list products-admin-list">{rows.map((product) => <article className="surface" key={product.id}>
-      <div><strong>{product.name}</strong><small>{product.is_active ? 'Publicado' : 'Rascunho'} · {product.price_cents === null ? 'Preço sob consulta' : `R$ ${(product.price_cents / 100).toFixed(2)}`}</small></div>
-      <label className="upload-label"><Upload size={15}/> Imagem<input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) upload(product.id, file); }} /></label>
-      <button className="icon-btn" onClick={() => edit(product)} aria-label={`Editar ${product.name}`}><Pencil size={18}/></button>
-      <button className="icon-btn danger" onClick={() => remove(product)} aria-label={`Excluir ${product.name}`}><Trash2 size={18}/></button>
-    </article>)}</div>
+    <p className="admin-photo-hint">Fotos JPG, PNG ou WebP (até 12 MB na origem). O navegador reduz a imagem para até 1600 px e 2 MB antes do envio. Fotos e preços reais devem ser conferidos pela loja.</p>
+    {notice && <div className="notice" role="status" aria-live="polite">{notice}</div>}
+    {loading && <div className="notice" role="status">Carregando produtos e fotos...</div>}
+    <div className="admin-list products-admin-list">
+      {rows.map(product => {
+        const itemPhotos = productPhotos(photos, product.id);
+        return <article className="surface" key={product.id}>
+          <div className="product-admin-summary">
+            <strong>{product.name}</strong>
+            <small>{product.is_active ? 'Publicado' : 'Rascunho'} · {product.price_cents === null ? 'Preço sob consulta' : 'R$ ' + (product.price_cents / 100).toFixed(2)} · {itemPhotos.length} foto(s)</small>
+          </div>
+          <label className="upload-label" aria-label={'Selecionar foto para ' + product.name}>
+            <Upload size={15}/> {preparingId === product.id ? 'Preparando...' : 'Adicionar foto'}
+            <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busyPhotoId !== null || preparingId !== null}
+              onChange={event => {
+                const file = event.currentTarget.files?.[0];
+                event.currentTarget.value = '';
+                if (file) void selectPhoto(product.id, file);
+              }} />
+          </label>
+          <button className="icon-btn" disabled={busyPhotoId !== null} onClick={() => edit(product)}
+            aria-label={'Editar ' + product.name}><Pencil size={18}/></button>
+          <button className="icon-btn danger" disabled={busyPhotoId !== null} onClick={() => void remove(product)}
+            aria-label={'Excluir ' + product.name}><Trash2 size={18}/></button>
+          {pending?.productId === product.id && <div className="product-photo-preview" role="region" aria-label="Conferência antes do envio">
+            <img src={pending.url} alt={'Prévia da foto para ' + product.name}/>
+            <div><strong>Conferir imagem</strong><small>{pending.width} × {pending.height} px · {formatFileBytes(pending.file.size)} (original: {formatFileBytes(pending.sourceBytes)})</small>
+              <div className="photo-preview-actions">
+                <button type="button" className="btn btn-primary" disabled={busyPhotoId !== null} onClick={() => void confirmPhoto()}>Confirmar envio</button>
+                <button type="button" className="btn btn-ghost" disabled={busyPhotoId !== null} onClick={() => setPending(null)}>Cancelar</button>
+              </div>
+            </div>
+          </div>}
+          <div className="product-photo-gallery-wrap">
+            <ProductMediaGallery photos={itemPhotos} productName={product.name} disabled={busyPhotoId !== null}
+              onMakeCover={photo => void makeCover(photo)} onDelete={photo => void removePhoto(photo)}/>
+          </div>
+        </article>;
+      })}
+    </div>
+    {!loading && !rows.length && <div className="notice">Nenhum produto cadastrado. Utilize o formulário acima para começar.</div>}
   </div>;
 }
